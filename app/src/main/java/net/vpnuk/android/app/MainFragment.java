@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +29,14 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import de.blinkt.openvpn.api.APIVpnProfile;
+import de.blinkt.openvpn.api.ExternalOpenVPNService;
 import de.blinkt.openvpn.api.IOpenVPNAPIService;
 import de.blinkt.openvpn.api.IOpenVPNStatusCallback;
+import de.blinkt.openvpn.core.OpenVPNService;
 
 public class MainFragment extends Fragment implements View.OnClickListener, Handler.Callback {
 
+    private static final String TAG = MainFragment.class.getSimpleName();
     private TextView mHelloWorld;
     private Button mStartVpn;
     private TextView mMyIp;
@@ -69,7 +73,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
     private void startEmbeddedProfile()
     {
         try {
-            InputStream conf = getActivity().getAssets().open("vpnuk_embedded.ovpn");
+            InputStream conf = getActivity().getAssets().open("vpn.ovpn");
             InputStreamReader isr = new InputStreamReader(conf);
             BufferedReader br = new BufferedReader(isr);
             String config="";
@@ -82,7 +86,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
             }
             br.readLine();
 
-            //			mService.addVPNProfile("test", config);
             mService.startVPN(config);
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,6 +137,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
 
             mService = IOpenVPNAPIService.Stub.asInterface(service);
 
+            Log.d(TAG, "onServiceConnected: mService = " + (mService == null ? "null" : mService.toString()));
+
             try {
                 // Request permission to use the API
                 Intent i = mService.prepare(getActivity().getPackageName());
@@ -154,13 +159,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
             // unexpectedly disconnected -- that is, its process crashed.
             mService = null;
 
+            Log.d(TAG, "onServiceDisconnected");
         }
     };
     private String mStartUUID=null;
 
     private void bindService() {
-        getActivity().bindService(new Intent(IOpenVPNAPIService.class.getName()),
-                mConnection, Context.BIND_AUTO_CREATE);
+        Intent intent = new Intent(getActivity(), ExternalOpenVPNService.class);
+
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        getActivity().startService(new Intent(getActivity(), ExternalOpenVPNService.class));
     }
 
     protected void listVPNs() {

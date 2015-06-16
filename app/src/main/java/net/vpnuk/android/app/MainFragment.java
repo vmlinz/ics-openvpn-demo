@@ -29,6 +29,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import de.blinkt.openvpn.api.APIVpnProfile;
+import de.blinkt.openvpn.api.ExternalAppDatabase;
 import de.blinkt.openvpn.api.ExternalOpenVPNService;
 import de.blinkt.openvpn.api.IOpenVPNAPIService;
 import de.blinkt.openvpn.api.IOpenVPNStatusCallback;
@@ -53,7 +54,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
         mStatus = (TextView) v.findViewById(R.id.status);
         mMyIp = (TextView) v.findViewById(R.id.MyIpText);
 
-
         return v;
 
     }
@@ -66,9 +66,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
 
     protected IOpenVPNAPIService mService=null;
     private Handler mHandler;
-
-
-
 
     private void startEmbeddedProfile()
     {
@@ -139,7 +136,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
 
             Log.d(TAG, "onServiceConnected: mService = " + (mService == null ? "null" : mService.toString()));
 
-            try {
+            // Add current application to the granted app database without confirmation dialog.
+
+            new ExternalAppDatabase(getActivity()).addApp(getActivity().getPackageName());
+            /* try {
                 // Request permission to use the API
                 Intent i = mService.prepare(getActivity().getPackageName());
                 if (i!=null) {
@@ -151,7 +151,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
             } catch (RemoteException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            }
+            }*/
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -187,8 +187,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
                 b.setText(list.get(0).mName);
                 mStartUUID = list.get(0).mUUID;
             }
-
-
 
            mHelloWorld.setText(all);
 
@@ -291,7 +289,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
 
             }
         }
-    };
+    }
 
     String getMyOwnIP() throws UnknownHostException, IOException, RemoteException,
             IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
@@ -300,7 +298,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
         Socket client = new Socket();
         // Setting Keep Alive forces creation of the underlying socket, otherwise getFD returns -1
         client.setKeepAlive(true);
-
 
         client.connect(new InetSocketAddress("v4address.com", 23),20000);
         client.shutdownOutput();
@@ -313,8 +310,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
         }
 
     }
-
-
 
     @Override
     public boolean handleMessage(Message msg) {

@@ -33,7 +33,6 @@ import de.blinkt.openvpn.api.ExternalAppDatabase;
 import de.blinkt.openvpn.api.ExternalOpenVPNService;
 import de.blinkt.openvpn.api.IOpenVPNAPIService;
 import de.blinkt.openvpn.api.IOpenVPNStatusCallback;
-import de.blinkt.openvpn.core.OpenVPNService;
 
 public class MainFragment extends Fragment implements View.OnClickListener, Handler.Callback {
 

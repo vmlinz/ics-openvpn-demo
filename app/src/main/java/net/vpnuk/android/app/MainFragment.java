@@ -272,21 +272,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode==START_PROFILE_EMBEDDED)
                 startEmbeddedProfile();
-            if(requestCode==START_PROFILE_BYUUID)
+            if(requestCode==START_PROFILE_BYUUID) {
                 try {
                     mService.startProfile(mStartUUID);
                 } catch (RemoteException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            if (requestCode == ICS_OPENVPN_PERMISSION) {
-                listVPNs();
-                try {
-                    mService.registerStatusCallback(mCallback);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
+            }
+            listVPNs();
+            try {
+                mService.registerStatusCallback(mCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     }

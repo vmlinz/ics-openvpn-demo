@@ -37,21 +37,25 @@ import de.blinkt.openvpn.api.IOpenVPNStatusCallback;
 public class MainFragment extends Fragment implements View.OnClickListener, Handler.Callback {
 
     private static final String TAG = MainFragment.class.getSimpleName();
-    private TextView mHelloWorld;
-    private Button mStartVpn;
     private TextView mMyIp;
     private TextView mStatus;
+    private Button mDisconnect;
+    private Button mStartEmbeddedVpn;
+    private Button mStartUUIDVpn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        v.findViewById(R.id.disconnect).setOnClickListener(this);
-        v.findViewById(R.id.getMyIP).setOnClickListener(this);
-        v.findViewById(R.id.startembedded).setOnClickListener(this);
-        mHelloWorld = (TextView) v.findViewById(R.id.helloworld);
-        mStartVpn = (Button) v.findViewById(R.id.startVPN);
-        mStatus = (TextView) v.findViewById(R.id.status);
-        mMyIp = (TextView) v.findViewById(R.id.MyIpText);
+        v.findViewById(R.id.disconnect_vpn_btn).setOnClickListener(this);
+        v.findViewById(R.id.get_my_ip_btn).setOnClickListener(this);
+        v.findViewById(R.id.start_embedded_vpn_btn).setOnClickListener(this);
+        v.findViewById(R.id.start_uuid_vpn_btn).setOnClickListener(this);
+        mStatus = (TextView) v.findViewById(R.id.status_text);
+        mMyIp = (TextView) v.findViewById(R.id.my_ip_text);
+        mDisconnect = (Button) v.findViewById(R.id.disconnect_vpn_btn);
+        mStartEmbeddedVpn = (Button) v.findViewById(R.id.start_embedded_vpn_btn);
+        mStartUUIDVpn = (Button) v.findViewById(R.id.start_uuid_vpn_btn);
+
 
         return v;
 
@@ -180,18 +184,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
             }
 
             if(list.size()> 0) {
-                Button b= mStartVpn;
+                Button b= mStartUUIDVpn;
                 b.setOnClickListener(this);
                 b.setVisibility(View.VISIBLE);
                 b.setText(list.get(0).mName);
                 mStartUUID = list.get(0).mUUID;
             }
 
-           mHelloWorld.setText(all);
-
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
-            mHelloWorld.setText(e.getMessage());
         }
     }
 
@@ -208,14 +209,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.startVPN:
-                try {
-                    prepareStartProfile(START_PROFILE_BYUUID);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.disconnect:
+            case R.id.disconnect_vpn_btn:
                 try {
                     mService.disconnect();
                 } catch (RemoteException e) {
@@ -223,8 +217,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
                     e.printStackTrace();
                 }
                 break;
-            case R.id.getMyIP:
-
+            case R.id.get_my_ip_btn:
                 // Socket handling is not allowed on main thread
                 new Thread() {
 
@@ -243,7 +236,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Hand
                 }.start();
 
                 break;
-            case R.id.startembedded:
+            case R.id.start_embedded_vpn_btn:
                 try {
                     prepareStartProfile(START_PROFILE_EMBEDDED);
                 } catch (RemoteException e) {

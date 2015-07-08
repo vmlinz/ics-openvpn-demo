@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="material_blue_500" type="color">#2196F3</item>
+    <item name="material_blue_800" type="color">#1565C0</item>
+    <item name="colorClickRipple" type="color">#FFEB3B</item>
+
+    <!--Component colors-->
+    <item name="primary" type="color">@color/material_blue_500</item>
+    <item name="primaryDark" type="color">@color/material_blue_800</item>
+
+</resources>

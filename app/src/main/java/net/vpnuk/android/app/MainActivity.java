@@ -1,11 +1,14 @@
 package net.vpnuk.android.app;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
+
+    Toolbar mToolbar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,11 +17,22 @@ public class MainActivity extends Activity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new MainFragment())
+                    .replace(R.id.frame_container, new MainFragment())
                     .commit();
         }
+
     }
 
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -39,7 +53,4 @@ public class MainActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
 }
